@@ -59,19 +59,16 @@ class MyFormulaire:
 
          telephone = Label(frame1, text="N° de téléphone: ", bg="#DC7633", fg="white", font=('time new roman', 10))
          telephone.grid(row=6, column=0)
-         self.telephone_entry = Entry(frame1, command=self.Nombre, fg="black", width=60)
+         self.telephone_entry = Entry(frame1, fg="black", width=60)
          self.telephone_entry.grid(row=6, column=2)
 
          btn_valider = Button(frame1, text ="Valider", bg="#DC7633", fg="white", width=30, command=self.Formulaire_BDD)
          btn_valider.grid(row=7, column=2)
 
-     def Nombre(self):
-         try:
-             int(self.telephone_entry.get())
-         except ValueError:
-             messagebox.showerror("Erreur", "Entrez des chiffres dans le champs téléphone, SVP!")
+
 
      def Formulaire_BDD(self):
+
         if self.prenom_entry.get() =="" or self.nom_entry.get()=="" or self.email_entry.get()=="":
             messagebox.showerror("Erreur","Remplissez tous les champs SVP!", parent=self.appFrom)
 
@@ -85,6 +82,8 @@ class MyFormulaire:
 
                 if row != None :
                     messagebox.showerror("Erreur", " Ce mail existe déjà", parent=self.appFrom)
+                elif self.telephone_entry is not int():
+                    messagebox.showerror("Erreur", " Entrez un bon numéro de téléphone, SVP!", parent=self.appFrom)
                 else:
                     cur.execute("insert into registre(Prénom, Nom, Datenaissance, Paysnaissance, Email, Telephone) values(%s,%s,%s,%s,%s,%s)",
                             (self.prenom_entry.get(),
