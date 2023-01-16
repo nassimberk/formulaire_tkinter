@@ -30,7 +30,7 @@ class MyFormulaire:
          frame1 = Frame(frame, bg="#DC7633")
          frame1.pack(expand=YES)
 
-         # Les champs de renseignement :
+
 
          prenom = Label(frame1, text="Prénom: ", bg="#DC7633", fg="white", font=('time new roman', 10))
          prenom.grid(row=0, column=0)
@@ -59,35 +59,46 @@ class MyFormulaire:
 
          telephone = Label(frame1, text="N° de téléphone: ", bg="#DC7633", fg="white", font=('time new roman', 10))
          telephone.grid(row=6, column=0)
-         self.telephone_entry = Entry(frame1, fg="black", width=60)
+         self.telephone_entry = Entry(frame1, command=self.Nombre, fg="black", width=60)
          self.telephone_entry.grid(row=6, column=2)
 
          btn_valider = Button(frame1, text ="Valider", bg="#DC7633", fg="white", width=30, command=self.Formulaire_BDD)
          btn_valider.grid(row=7, column=2)
 
-     def Formulaire_BDD(self):
-        try:
-            con = pymysql.connect(host="localhost", user="root", password="", database="formulaire")
-            cur = con.cursor()
-            cur.execute("select * from registre where Email=%s", self.email_entry.get())
-            row = cur.fetchone()
+     def Nombre(self):
+         try:
+             int(self.telephone_entry.get())
+         except ValueError:
+             messagebox.showerror("Erreur", "Entrez des chiffres dans le champs téléphone, SVP!")
 
-            if row != None :
-                messagebox.showerror("Erreur", " Ce mail existe déjà", parent=self.appFrom)
-            else:
-                cur.execute("insert into registre(Prénom, Nom, Datenaissance, Paysnaissance, Email, Telephone) values(%s,%s,%s,%s,%s,%s)",
+     def Formulaire_BDD(self):
+        if self.prenom_entry.get() =="" or self.nom_entry.get()=="" or self.email_entry.get()=="":
+            messagebox.showerror("Erreur","Remplissez tous les champs SVP!", parent=self.appFrom)
+
+        else:
+
+            try:
+                con = pymysql.connect(host="localhost", user="root", password="", database="formulaire")
+                cur = con.cursor()
+                cur.execute("select * from registre where Email=%s", self.email_entry.get())
+                row = cur.fetchone()
+
+                if row != None :
+                    messagebox.showerror("Erreur", " Ce mail existe déjà", parent=self.appFrom)
+                else:
+                    cur.execute("insert into registre(Prénom, Nom, Datenaissance, Paysnaissance, Email, Telephone) values(%s,%s,%s,%s,%s,%s)",
                             (self.prenom_entry.get(),
                             self.nom_entry.get(),
                             self.date_naissance_entry.get(),
                             self.pays_entry.get(),
                             self.email_entry.get(),
                             self.telephone_entry.get()
-                            ))
-                con.commit()
-                con.close()
-                messagebox.showinfo("Seccess", "Ajout effectué avec succès", parent=self.appFrom)
-        except Exception as es:
-            messagebox.showerror("Erreur", f"Erreur de connexion : {str(es)}", parent=self.appFrom)
+                     ))
+                    con.commit()
+                    con.close()
+                    messagebox.showinfo("Seccess", "Ajout effectué avec succès", parent=self.appFrom)
+            except Exception as es:
+                messagebox.showerror("Erreur", f"Erreur de connexion : {str(es)}", parent=self.appFrom)
 
 appFrom = Tk()
 obj = MyFormulaire(appFrom)
